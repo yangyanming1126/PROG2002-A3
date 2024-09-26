@@ -1,11 +1,16 @@
 const mysql = require('mysql2');
-
-// 创建数据库连接配置
-const connection = mysql.createPool({
-    host: 'localhost', // 数据库服务器地址
-    user: 'root', // 数据库用户名
-    password: 'Lunyiyao20030110.', // 数据库密码
-    database: 'crowdfunding_db' // 数据库名
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'Lunyiyao20030110.',
+  database: 'crowdfunding_db'
 });
 
-module.exports = connection;
+connection.connect(err => {
+  if (err) throw err;
+  console.log('Connected to the database!');
+});
+
+// 在这里添加您的数据库交互代码
+
+connection.end();
