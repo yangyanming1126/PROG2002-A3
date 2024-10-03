@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make a Donation</title>
+    <style>
+        /* 样式与先前页面保持一致 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Make a Donation</h1>
+
+    <!-- 筹款活动详情显示区域 -->
+    <div id="fundraiserDetails"></div>
+
+    <!-- 捐款表单 -->
+    <form id="donationForm">
+        <label for="giver">Your Name:</label><br>
+        <input type="text" id="giver" name="giver" ><br><br>
+
+        <label for="amount">Donation Amount (AUD):</label><br>
+        <input type="number" id="amount" name="amount"  ><br><br>
+
+        <button type="submit">Submit My Donation</button>
+    </form>
+
+    <div id="message"></div>
+</div>
+
+<script>
+    // 获取URL中的查询参数
+    const params = new URLSearchParams(window.location.search);
+    const fundraiserId = params.get('fundraiserId');
+
+    // 获取筹款活动详情
+    if (fundraiserId) {
+        fetch(`http://localhost:3000/api/fundraiser/${fundraiserId}`)
+            .then(response => response.json())
+            .then(fundraiser => {
+                const detailsDiv = document.getElementById('fundraiserDetails');
+                detailsDiv.innerHTML = `
+                    <h2>${fundraiser.CAPTION}</h2>
+                    <p><strong>Organizer:</strong> ${fundraiser.ORGANIZER}</p>
+                    <p><strong>Target Funding:</strong> $${fundraiser.TARGET_FUNDING}</p>
+                    <p><strong>Current Funding:</strong> $${fundraiser.CURRENT_FUNDING}</p>
+                `;
+            })
+            .catch(error => {
+                console.error('Error fetching fundraiser details:', error);
+                document.getElementById('fundraiserDetails').innerHTML = '<p class="error">Fundraiser not found.</p>';
+            });
+    }
+
+    // 表单提交处理
+    document.getElementById('donationForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const giver = document.getElementById('giver').value;
+        const amount = parseFloat(document.getElementById('amount').value);
+
+        // 验证金额是否至少为5澳元
+        if (amount < 5) {
+            alert('The minimum donation amount is 5 AUD.');
+            return;
+        }
+
+        // 发送捐款请求
+        const donationData = {
+            date: formatDate(new Date()),  // 使用格式化函数
+            amount: amount,
+            giver: giver
+        };
+
+        fetch(`http://localhost:3000/api/fundraiser/${fundraiserId}/donate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(donationData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(`Thank you for your donation to ${data.fundraiserName}!`);
+            window.location.href = `/fundraiser.html?fundraiserId=${fundraiserId}`;
+        })
+        .catch(error => {
+            console.error('Error submitting donation:', error);
+            document.getElementById('message').innerHTML = '<p class="error">Error submitting donation.</p>';
+        });
+    });
+
+    // 格式化日期函数，返回格式为 'YYYY-MM-DD HH:MM:SS'
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始，因此要+1
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+</script>
+
+</body>
+</html>

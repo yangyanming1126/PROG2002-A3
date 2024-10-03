@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundraiser Details</title>
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* 容器样式 */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        /* 导航栏样式 */
+        nav {
+            background-color: #007bff;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+            padding: 10px;
+        }
+
+        nav a:hover {
+            background-color: #0056b3;
+            border-radius: 5px;
+        }
+
+        /* 内容区样式 */
+        .content {
+            width: 60%;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        .fundraiser-info h2 {
+            margin-top: 0;
+        }
+
+        /* 按钮样式 */
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        /* 图片区域 */
+        .fundraiser img {
+            width: 30%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        /* 右侧图片 */
+        .image-section {
+            width: 35%;
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            border-radius: 8px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="content">
+        <!-- 导航栏 -->
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="search.html">Back to Search</a>
+        </nav>
+
+        <!-- 筹款者的详细信息显示区域 -->
+        <div id="fundraiserDetails"></div>
+
+        <!-- 捐赠按钮 -->
+        <button id="donateButton">Donate</button>
+    </div>
+
+    <!-- 右侧图片区域 -->
+    <div id="image-section" class="image-section"></div>
+</div>
+
+<script>
+    // 获取URL中的查询参数
+    const params = new URLSearchParams(window.location.search);
+    const fundraiserId = params.get('fundraiserId');
+
+    // 检查fundraiserId是否存在
+    if (!fundraiserId) {
+        document.getElementById('fundraiserDetails').innerHTML = '<p class="error">未找到筹款者。</p>';
+    } else {
+        // 根据fundraiserId调用API获取筹款者详细信息
+        fetch(`http://localhost:3000/api/fundraiser/${fundraiserId}`)
+            .then(response => response.json())
+            .then(fundraiser => {
+                // 显示筹款者的详细信息
+                const detailsDiv = document.getElementById('fundraiserDetails');
+                detailsDiv.innerHTML = `
+				 <div class="fundraiser-info">
+                    <h2>${fundraiser.CAPTION}</h2>
+                    <p><strong>Organizer:</strong> ${fundraiser.ORGANIZER}</p>
+                    <p><strong>Category:</strong> ${fundraiser.category_name}</p>
+                    <p><strong>Target Funding:</strong> $${fundraiser.TARGET_FUNDING}</p>
+                    <p><strong>Current Funding:</strong> $${fundraiser.CURRENT_FUNDING}</p>
+                    <p><strong>City:</strong> ${fundraiser.CITY}</p>
+				</div>
+                `;
+				// 设置图片路径
+                const imageSection = document.getElementById('image-section');
+                let imageUrl = '';
+                if (fundraiser.FUNDRAISER_ID === 1) {
+                    imageUrl = './image/3.jpg';
+                } else if (fundraiser.FUNDRAISER_ID === 2) {
+                    imageUrl = './image/5.jpg';
+                } else if (fundraiser.FUNDRAISER_ID === 3) {
+                    imageUrl = './image/4.jpg';
+                } else if (fundraiser.FUNDRAISER_ID === 4) {
+                    imageUrl = './image/2.jpg';
+                } else if (fundraiser.FUNDRAISER_ID === 5) {
+                    imageUrl = './image/1.jpg';
+                }
+                imageSection.style.backgroundImage = `url(${imageUrl})`;
+            })
+            .catch(error => {
+                console.error('Error fetching fundraiser details:', error);
+                document.getElementById('fundraiserDetails').innerHTML = '<p class="error">Fundraiser not found.</p>';
+            });
+    }
+
+    // “捐赠”按钮的点击事件
+    document.getElementById('donateButton').addEventListener('click', () => {
+        window.location.href = `/donation.html?fundraiserId=${fundraiserId}`;
+    });
+</script>
+
+</body>
+</html>

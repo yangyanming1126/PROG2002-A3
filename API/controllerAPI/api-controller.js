@@ -1,9 +1,12 @@
 const express = require('express');
-const dbcon = require("../database");
-const connection = dbcon.getconnection();
+
+var dbcon = require("../database");
+
+var connection = dbcon.getconnection();
+
 connection.connect();
 
-const router = express.Router();
+var router = express.Router();
 
 // Retrieve all active fundraisers including the category
 router.get("/fundraisers", (req, res) => {
@@ -16,61 +19,6 @@ router.get("/fundraisers", (req, res) => {
         }
     });
 });
-
-// Retrieve all categories from the database
-router.get("/categories", (req, res) => {
-    connection.query("SELECT * FROM Category", (err, results) => {
-        if (err) {
-            console.error("Error retrieving categories", err);
-            res.status(500).send("Error while retrieving categories");
-        } else {
-            res.json(results);
-        }
-    });
-});
-
-// Retrieve fundraiser details by ID
-router.get("/fundraiser/:id", (req, res) => {
-    const { id } = req.params;
-    connection.query("SELECT f.*, c.NAME AS category_name FROM Fundraiser f JOIN Category c ON f.category_id = c.CATEGORY_ID WHERE f.active=1 AND f.FUNDRAISER_ID = ?", [id], (err, results) => {
-        if (err) {
-            console.error("Error retrieving fundraiser", err);
-            res.status(500).send("Error while retrieving fundraiser");
-        } else {
-            res.json(results[0]);
-        }
-    });
-});
-
-// Add a new donation for a specific fundraiser
-router.post("/fundraiser/:id/donation", (req, res) => {
-    const { id } = req.params; // The fundraiser ID
-    const { date, amount, giver } = req.body; // Donation details from request body
-
-    // Validate required fields
-    if (!date || !amount || !giver) {
-        return res.status(400).send("Missing required donation fields: date, amount, giver.");
-    }
-
-    const donationData = {
-        DATE: date,
-        AMOUNT: amount,
-        GIVER: giver,
-        FUNDRAISER_ID: id
-    };
-
-    // Insert donation into the donation table
-    connection.query("INSERT INTO donation SET ?", donationData, (err, results) => {
-        if (err) {
-            console.error("Error while inserting donation", err);
-            res.status(500).send("Error while processing donation.");
-        } else {
-            res.status(201).send({ message: "Donation successful", donationId: results.insertId });
-        }
-    });
-});
-
-
 // POST: 创建新的筹款活动
 router.post("/fundraiser", (req, res) => {
     const { organizer, caption, target_funding, current_funding, city, active, category_id } = req.body;
@@ -159,5 +107,67 @@ router.delete("/fundraiser/:id", (req, res) => {
     });
 });
 
+// Retrieve all categories from the database
+router.get("/categories", (req, res) => {
+    connection.query("SELECT * FROM Category", (err, results) => {
+        if (err) {
+            console.error("Error retrieving categories", err);
+            res.status(500).send("Error while retrieving categories");
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+// Retrieve fundraiser details by ID
+router.get("/fundraiser/:id", (req, res) => {
+    const { id } = req.params;
+    connection.query("SELECT f.*, c.NAME AS category_name FROM Fundraiser f JOIN Category c ON f.category_id = c.CATEGORY_ID where f.active=1 and  f.FUNDRAISER_ID = ?", [id], (err, results) => {
+        if (err) {
+            console.error("Error retrieving fundraiser", err);
+            res.status(500).send("Error while retrieving fundraiser");
+        } else {
+            res.json(results[0]);
+        }
+    });
+});
+// Add a new donation for a specific fundraiser
+router.post("/fundraiser/:id/donate", (req, res) => {
+    const { id } = req.params; // The fundraiser ID
+    const { date, amount, giver } = req.body; // Donation details from request body
+
+    // Validate required fields
+    if (!date || !amount || !giver) {
+        return res.status(400).send("Missing required donation fields: date, amount, giver.");
+    }
+
+    const donationData = {
+        DATE: date,
+        AMOUNT: amount,
+        GIVER: giver,
+        FUNDRAISER_ID: id
+    };
+
+    // Insert donation into the donation table
+    connection.query("INSERT INTO donation SET ?", donationData, (err, results) => {
+        if (err) {
+            console.error("Error while inserting donation", err);
+            res.status(500).send("Error while processing donation.");
+        } else {
+            // 获取当前筹款活动的名称
+            connection.query("SELECT CAPTION FROM fundraiser WHERE FUNDRAISER_ID = ?", [id], (err, fundraiserResults) => {
+                if (err) {
+                    console.error("Error retrieving fundraiser name", err);
+                    res.status(500).send("Error retrieving fundraiser name.");
+                } else {
+                    const fundraiserName = fundraiserResults[0].CAPTION;
+                    // 返回成功消息以及筹款活动名称
+                    res.status(201).send({ message: "Donation successful", fundraiserName: fundraiserName });
+                }
+            });
+        }
+    });
+});
 
 module.exports = router;
+

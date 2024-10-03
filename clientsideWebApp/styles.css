@@ -1,0 +1,92 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f3f3f3;
+}
+
+label {
+    margin-right: 10px;
+}
+
+input[type="text"] {
+    margin-right: 10px;
+}
+
+#results {
+    margin-top: 20px;
+    color: red;
+}
+
+header, footer {
+    padding: 10px;
+    text-align: center;
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-image: url(/image/header.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.nav-item {
+    margin-left: 10px;
+}
+
+.nav-item a {
+    color: white;
+    text-decoration: none;
+    padding: 5px 10px;
+    transition: background-color 0.3s;
+}
+
+.nav-item a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+}
+
+.header-content {
+    max-width: 80%; /* 限制内容区域宽度，防止内容溢出 */
+    margin: 0 auto; /* 居中对齐内容 */
+    text-align: center; /* 文本居中对齐 */
+}
+#fundraisers {
+    margin: 20px;
+    padding: 20px;
+    background-color: #e9ecef;
+}
+
+.fundraiser {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.fundraiser .content {
+    flex: 1;
+    padding-right: 20px;
+}
+
+.fundraiser .image {
+    width: 800px; /* 设置图片容器的宽度 */
+    height: 220px; /* 设置图片容器的高度 */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}

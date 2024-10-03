@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Non-Profit Organization</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+    <nav>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="/search.html">Search</a></li>
+        </ul>
+    </nav>
+    <div class="header-content">
+        <h1>Welcome to Assessment2</h1>
+        <p>Here is the content...</p>
+    </div>
+</header>
+<section id="fundraisers"></section>
+<footer>
+    <p>© 2023 YanmingYang </p>
+</footer>
+
+<script>
+    // 当DOM内容加载完毕后执行
+    document.addEventListener('DOMContentLoaded', function() {
+        // 获取 fundraisers section 的 DOM 元素
+        const fundraisersSection = document.getElementById('fundraisers');
+
+        // 调用 API 获取筹款活动的数据
+        fetch('http://localhost:3000/api/fundraisers')
+            .then(response => response.json())  // 将返回的数据转换为 JSON 格式
+            .then(data => {
+                // 遍历数据，生成动态内容
+                data.forEach(fundraiser => {
+                    if (fundraiser.ACTIVE === 1) {  // 只显示活跃状态为1的筹款活动
+                        const fundraiserElement = document.createElement('div');  // 创建一个新的 div 容器
+                        fundraiserElement.classList.add('fundraiser');  // 为 div 添加 class
+
+                        const contentElement = document.createElement('div');
+                        contentElement.classList.add('content');
+                        contentElement.innerHTML = `
+                            <h2>${fundraiser.CAPTION}</h2>
+                            <p><strong>Organizer:</strong> ${fundraiser.ORGANIZER}</p>
+                            <p><strong>Category:</strong> ${fundraiser.category_name}</p>
+                            <p><strong>Target Funding:</strong> $${fundraiser.TARGET_FUNDING}</p>
+                            <p><strong>Current Funding:</strong> $${fundraiser.CURRENT_FUNDING}</p>
+                            <p><strong>City:</strong> ${fundraiser.CITY}</p>
+                        `;
+						const imageElement = document.createElement('div');
+                        imageElement.classList.add('image');
+                        if (fundraiser.FUNDRAISER_ID === 1) {
+                            imageElement.style.backgroundImage = `url(./image/3.jpg)`;
+                        } else if (fundraiser.FUNDRAISER_ID === 2) {
+                            imageElement.style.backgroundImage = `url(./image/5.jpg)`;
+                        } else if (fundraiser.FUNDRAISER_ID === 3) {
+                            imageElement.style.backgroundImage = `url(./image/4.jpg)`;
+                        } else if (fundraiser.FUNDRAISER_ID === 4) {
+                            imageElement.style.backgroundImage = `url(./image/2.jpg)`;
+                        } else if (fundraiser.FUNDRAISER_ID === 5) {
+                            imageElement.style.backgroundImage = `url(./image/1.jpg)`;
+                        }
+						fundraiserElement.appendChild(contentElement);
+                        fundraiserElement.appendChild(imageElement);
+                        // 将生成的内容添加到 fundraisers section 中
+                        fundraisersSection.appendChild(fundraiserElement);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error getting fundraising campaign data:', error);  // 捕获并打印错误
+            });
+    });
+</script>
+
+</body>
+</html>
+

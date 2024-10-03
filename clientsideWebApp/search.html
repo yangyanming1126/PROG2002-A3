@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Fundraisers</title>
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* 容器样式 */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        /* 表单样式 */
+        form div {
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        /* 错误信息 */
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        /* 返回首页按钮 */
+        .back-home {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .back-home:hover {
+            background-color: #0056b3;
+        }
+
+        /* 筹款项样式 */
+        .fundraiser {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+
+        .fundraiser-info {
+            width: 60%;
+        }
+
+        .fundraiser img {
+            width: 30%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .fundraiser h2 {
+            margin-top: 0;
+        }
+
+        .fundraiser a {
+            color: blue;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 左侧内容区 -->
+    <h1>Search Fundraisers</h1>
+    <a href="/index.html" class="back-home">Back to Home</a>
+    <form id="searchForm">
+        <div>
+            <label for="organizer">Organizer:</label>
+            <input type="text" id="organizer" name="organizer">
+        </div>
+        <div>
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city">
+        </div>
+        <div>
+            <label for="category">Category:</label>
+            <input type="text" id="category" name="category">
+        </div>
+        <button type="button" onclick="fetchFundraisers()">Search</button>
+        <button type="button" onclick="clearCheckboxes()">Clear</button>
+    </form>
+
+    <!-- 用于显示错误信息 -->
+    <div id="error" class="error"></div>
+
+    <!-- 搜索结果显示区域 -->
+    <div id="results"></div>
+</div>
+
+<script>
+    // 清除表单输入
+    function clearCheckboxes() {
+        document.getElementById('organizer').value = '';
+        document.getElementById('city').value = '';
+        document.getElementById('category').value = '';
+        document.getElementById('error').textContent = '';  // 清空错误信息
+        document.getElementById('results').innerHTML = '';  // 清空结果显示区域
+    }
+
+    // 执行搜索
+    function fetchFundraisers() {
+        // 获取用户输入的搜索条件
+        const organizer = document.getElementById('organizer').value.trim();
+        const city = document.getElementById('city').value.trim();
+        const category = document.getElementById('category').value.trim();
+
+        // 检查是否至少选择了一个条件
+        if (!organizer && !city && !category) {
+            document.getElementById('error').textContent = 'Please select at least one search criterion！';
+            return;
+        }
+
+        // 清空之前的错误信息和结果
+        document.getElementById('error').textContent = '';
+        document.getElementById('results').innerHTML = '';
+
+        // 调用API获取数据
+        fetch('http://localhost:3000/api/fundraisers')
+            .then(response => response.json())
+            .then(data => {
+                // 根据输入条件筛选数据
+                const filteredData = data.filter(fundraiser => {
+                    return (organizer === '' || fundraiser.ORGANIZER.toLowerCase().includes(organizer.toLowerCase())) &&
+                           (city === '' || fundraiser.CITY.toLowerCase().includes(city.toLowerCase())) &&
+                           (category === '' || fundraiser.category_name.toLowerCase().includes(category.toLowerCase())) &&
+                           fundraiser.ACTIVE === 1;
+                });
+
+                // 显示筛选后的数据
+                if (filteredData.length === 0) {
+                    document.getElementById('error').textContent = 'No fundraisers found matching the criteria.';
+                } else {
+                    displayResults(filteredData);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching fundraiser data:', error);
+            });
+    }
+
+    // 显示筛选后的结果
+    function displayResults(fundraisers) {
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = '';  // 先清空之前的内容
+
+        // 遍历每个筹款活动并生成HTML
+        fundraisers.forEach(fundraiser => {
+            const fundraiserElement = document.createElement('div');
+            fundraiserElement.classList.add('fundraiser');
+			// 设置图片路径
+            let imageUrl = '';
+            if (fundraiser.FUNDRAISER_ID === 1) {
+                imageUrl = './image/3.jpg';
+            } else if (fundraiser.FUNDRAISER_ID === 2) {
+                imageUrl = './image/5.jpg';
+            } else if (fundraiser.FUNDRAISER_ID === 3) {
+                imageUrl = './image/4.jpg';
+            } else if (fundraiser.FUNDRAISER_ID === 4) {
+                imageUrl = './image/2.jpg';
+            } else if (fundraiser.FUNDRAISER_ID === 5) {
+                imageUrl = './image/1.jpg';
+            }
+            // 生成每个筹款活动的详细信息和链接
+            fundraiserElement.innerHTML = `
+			<div class="fundraiser-info">
+                <h2><a href="/fundraiser.html?fundraiserId=${fundraiser.FUNDRAISER_ID}">${fundraiser.CAPTION}</a></h2>
+                <p><strong>Organizer:</strong> ${fundraiser.ORGANIZER}</p>
+                <p><strong>Category:</strong> ${fundraiser.category_name}</p>
+                <p><strong>Target Funding:</strong> $${fundraiser.TARGET_FUNDING}</p>
+                <p><strong>Current Funding:</strong> $${fundraiser.CURRENT_FUNDING}</p>
+                <p><strong>City:</strong> ${fundraiser.CITY}</p>
+			</div>
+			 <img src="${imageUrl}" alt="Fundraiser Image">
+            `;
+            resultsDiv.appendChild(fundraiserElement);
+        });
+    }
+</script>
+
+</body>
+</html>
