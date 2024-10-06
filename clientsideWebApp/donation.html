@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Make a Donation</title>
     <style>
-        /* 样式与先前页面保持一致 */
+        /* "Keep the styling consistent with the previous page." */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -51,10 +51,10 @@
 <div class="container">
     <h1>Make a Donation</h1>
 
-    <!-- 筹款活动详情显示区域 -->
+    <!-- "Fundraising event details display area." -->
     <div id="fundraiserDetails"></div>
 
-    <!-- 捐款表单 -->
+    <!-- "Donation form." -->
     <form id="donationForm">
         <label for="giver">Your Name:</label><br>
         <input type="text" id="giver" name="giver" ><br><br>
@@ -69,11 +69,11 @@
 </div>
 
 <script>
-    // 获取URL中的查询参数
+    // "Retrieve the query parameters from the URL."
     const params = new URLSearchParams(window.location.search);
     const fundraiserId = params.get('fundraiserId');
 
-    // 获取筹款活动详情
+    // "Retrieve the fundraising event details."
     if (fundraiserId) {
         fetch(`http://localhost:3000/api/fundraiser/${fundraiserId}`)
             .then(response => response.json())
@@ -92,22 +92,22 @@
             });
     }
 
-    // 表单提交处理
+    // "Form submission handling."
     document.getElementById('donationForm').addEventListener('submit', function(event) {
         event.preventDefault();
 
         const giver = document.getElementById('giver').value;
         const amount = parseFloat(document.getElementById('amount').value);
 
-        // 验证金额是否至少为5澳元
+        // "Validate that the amount is at least 5 AUD."
         if (amount < 5) {
             alert('The minimum donation amount is 5 AUD.');
             return;
         }
 
-        // 发送捐款请求
+        // "Send the donation request."
         const donationData = {
-            date: formatDate(new Date()),  // 使用格式化函数
+            date: formatDate(new Date()),  // "Use a formatting function."
             amount: amount,
             giver: giver
         };
@@ -130,7 +130,7 @@
         });
     });
 
-    // 格式化日期函数，返回格式为 'YYYY-MM-DD HH:MM:SS'
+    // "Date formatting function that returns the format 'YYYY-MM-DD HH:MM:SS'."
     function formatDate(date) {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始，因此要+1
