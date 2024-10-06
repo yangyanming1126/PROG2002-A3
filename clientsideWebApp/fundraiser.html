@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fundraiser Details</title>
     <style>
-        /* 全局样式 */
+        /* "Global styles." */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -17,7 +17,7 @@
             min-height: 100vh;
         }
 
-        /* 容器样式 */
+        /* "Container styles." */
         .container {
             width: 90%;
             max-width: 1200px;
@@ -30,7 +30,7 @@
             align-items: flex-start;
         }
 
-        /* 导航栏样式 */
+        /* "Navbar styles." */
         nav {
             background-color: #007bff;
             padding: 10px;
@@ -50,7 +50,7 @@
             border-radius: 5px;
         }
 
-        /* 内容区样式 */
+        /* "Content area styles." */
         .content {
             width: 60%;
         }
@@ -64,7 +64,7 @@
             margin-top: 0;
         }
 
-        /* 按钮样式 */
+        /* "Button styles." */
         button {
             padding: 10px 20px;
             background-color: #28a745;
@@ -79,14 +79,14 @@
             background-color: #218838;
         }
 
-        /* 图片区域 */
+        /* "Image area." */
         .fundraiser img {
             width: 30%;
             height: auto;
             border-radius: 8px;
         }
 
-        /* 右侧图片 */
+        /* "Right-side image." */
         .image-section {
             width: 35%;
             background-position: center;
@@ -100,37 +100,37 @@
 <body>
 <div class="container">
     <div class="content">
-        <!-- 导航栏 -->
+        <!-- "Navigation bar." -->
         <nav>
             <a href="index.html">Home</a>
             <a href="search.html">Back to Search</a>
         </nav>
 
-        <!-- 筹款者的详细信息显示区域 -->
+        <!-- "Fundraiser's details display area." -->
         <div id="fundraiserDetails"></div>
 
-        <!-- 捐赠按钮 -->
+        <!-- "Donate button." -->
         <button id="donateButton">Donate</button>
     </div>
 
-    <!-- 右侧图片区域 -->
+    <!-- "Right-side image area." -->
     <div id="image-section" class="image-section"></div>
 </div>
 
 <script>
-    // 获取URL中的查询参数
+    // "Retrieve the query parameters from the URL."
     const params = new URLSearchParams(window.location.search);
     const fundraiserId = params.get('fundraiserId');
 
-    // 检查fundraiserId是否存在
+    // "Check if `fundraiserId` exists."
     if (!fundraiserId) {
         document.getElementById('fundraiserDetails').innerHTML = '<p class="error">未找到筹款者。</p>';
     } else {
-        // 根据fundraiserId调用API获取筹款者详细信息
+        // "Call the API to retrieve the fundraiser's detailed information based on `fundraiserId`."
         fetch(`http://localhost:3000/api/fundraiser/${fundraiserId}`)
             .then(response => response.json())
             .then(fundraiser => {
-                // 显示筹款者的详细信息
+                // "Display the fundraiser's detailed information."
                 const detailsDiv = document.getElementById('fundraiserDetails');
                 detailsDiv.innerHTML = `
 				 <div class="fundraiser-info">
@@ -142,7 +142,7 @@
                     <p><strong>City:</strong> ${fundraiser.CITY}</p>
 				</div>
                 `;
-				// 设置图片路径
+				// "Set the image path."
                 const imageSection = document.getElementById('image-section');
                 let imageUrl = '';
                 if (fundraiser.FUNDRAISER_ID === 1) {
@@ -164,7 +164,7 @@
             });
     }
 
-    // “捐赠”按钮的点击事件
+    // "`Donate` button click event."
     document.getElementById('donateButton').addEventListener('click', () => {
         window.location.href = `/donation.html?fundraiserId=${fundraiserId}`;
     });
