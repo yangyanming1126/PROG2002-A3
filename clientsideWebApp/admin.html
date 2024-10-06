@@ -120,7 +120,7 @@
         <button onclick="showTab('create')">Create New Fundraiser</button>
     </nav>
 
-    <!-- 筹款活动列表 -->
+    <!-- "List of fundraising events." -->
     <div id="list" class="tab active">
         <h2>Fundraiser List</h2>
         <table id="fundraiserTable">
@@ -137,12 +137,12 @@
             </tr>
             </thead>
             <tbody>
-            <!-- 动态填充 -->
+            <!-- "Dynamic filling." -->
             </tbody>
         </table>
     </div>
 
-    <!-- 创建新的筹款活动 -->
+    <!-- "Create a new fundraising event." -->
     <div id="create" class="tab">
         <h2>Create New Fundraiser</h2>
         <form id="createFundraiserForm">
@@ -163,7 +163,7 @@
 
             <label for="category_id">Category</label>
             <select id="category_id" name="category_id" required>
-                <!-- 动态加载分类 -->
+                <!-- "Dynamic loading of categories." -->
             </select>
 
             <label for="active">Active</label>
@@ -176,7 +176,7 @@
         </form>
     </div>
 
-    <!-- 更新筹款活动 -->
+    <!-- "Update the fundraising event." -->
     <div id="update" class="tab">
         <h2>Update Fundraiser</h2>
         <form id="updateFundraiserForm">
@@ -199,7 +199,7 @@
 
             <label for="category_id">Category</label>
             <select id="update_category_id" name="category_id" required>
-                <!-- 动态加载分类 -->
+                <!-- "Dynamic loading of categories." -->
             </select>
 
             <label for="active">Active</label>
@@ -214,13 +214,13 @@
 </div>
 
 <script>
-    // 切换页面标签
+    // "Switch page tabs."
     function showTab(tabId) {
         document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
     }
 
-    // 加载筹款活动列表
+    // "Load the list of fundraising events."
     function loadFundraisers() {
         fetch('http://localhost:3000/api/fundraisers')
             .then(response => response.json())
@@ -228,11 +228,11 @@
                 const tableBody = document.querySelector('#fundraiserTable tbody');
                 tableBody.innerHTML = '';
 
-                // 遍历每个筹款活动，并在前端生成自定义的序号
+                // "Iterate through each fundraising event and generate a custom serial number on the frontend."
                 fundraisers.forEach((fundraiser, index) => {
                     const row = document.createElement('tr');
 
-                    // index + 1 作为行号，确保每次显示的序号是从 1 开始
+                    // "Use `index + 1` as the row number to ensure that the displayed serial number always starts from 1."
                     row.innerHTML = `
                     <td>${index + 1}</td>  <!-- 自定义序号 -->
                     <td>${fundraiser.ORGANIZER}</td>
@@ -251,7 +251,7 @@
             });
     }
 
-    // 删除筹款活动
+    // "Delete the fundraising event."
     function deleteFundraiser(fundraiserId) {
         if (confirm('Are you sure you want to delete this fundraiser?')) {
             fetch(`http://localhost:3000/api/fundraiser/${fundraiserId}`, {
@@ -260,21 +260,21 @@
                 .then(response => response.json())
                 .then(result => {
                     alert(result.message);
-                    loadFundraisers(); // 重新加载列表
+                    loadFundraisers(); // "Reload the list."
                 })
                 .catch(error => console.error('Error:', error));
         }
     }
 
-    // 编辑筹款活动
+    // "Edit the fundraising event."
     function editFundraiser(fundraiserId) {
         fetch(`http://localhost:3000/api/fundraiser/${fundraiserId}`)
             .then(response => response.json())
             .then(fundraiser => {
-                // 切换到更新表单
+                // "Switch to the update form."
                 showTab('update');
 
-                // 回显数据
+                // "Echo the data."
                 document.getElementById('fundraiser_id').value = fundraiser.FUNDRAISER_ID;
                 document.getElementById('update_organizer').value = fundraiser.ORGANIZER;
                 document.getElementById('update_caption').value = fundraiser.CAPTION;
@@ -286,7 +286,7 @@
             });
     }
 
-    // 创建新的筹款活动
+    // "Create a new fundraising event."
     document.getElementById('createFundraiserForm').addEventListener('submit', function (event) {
         event.preventDefault();
         const formData = new FormData(this);
@@ -308,7 +308,7 @@
             .catch(error => console.error('Error:', error));
     });
 
-    // 更新筹款活动
+    // "Update the fundraising event."
     document.getElementById('updateFundraiserForm').addEventListener('submit', function (event) {
         event.preventDefault();
         const fundraiserId = document.getElementById('fundraiser_id').value;
@@ -331,7 +331,7 @@
             .catch(error => console.error('Error:', error));
     });
 
-    // 加载分类数据
+    // "Load category data."
     function loadCategories() {
         fetch('http://localhost:3000/api/categories')
             .then(response => response.json())
@@ -346,7 +346,7 @@
             });
     }
 
-    // 初始化页面
+    // "Initialize the page."
     window.onload = function () {
         loadFundraisers();
         loadCategories();
