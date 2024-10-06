@@ -11,6 +11,6 @@ connection.connect(err => {
   console.log('Connected to the database!');
 });
 
-// 在这里添加您的数据库交互代码
+
 
 connection.end();
