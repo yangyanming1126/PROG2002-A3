@@ -24,20 +24,20 @@
 </footer>
 
 <script>
-    // 当DOM内容加载完毕后执行
+    // "Execute when the DOM content has fully loaded."
     document.addEventListener('DOMContentLoaded', function() {
-        // 获取 fundraisers section 的 DOM 元素
+        // "Retrieve the DOM element of the fundraisers section."
         const fundraisersSection = document.getElementById('fundraisers');
 
-        // 调用 API 获取筹款活动的数据
+        // "Call the API to retrieve the fundraising event data."
         fetch('http://localhost:3000/api/fundraisers')
-            .then(response => response.json())  // 将返回的数据转换为 JSON 格式
+            .then(response => response.json())  // "Convert the returned data to JSON format."
             .then(data => {
-                // 遍历数据，生成动态内容
+                // "Iterate through the data to generate dynamic content."
                 data.forEach(fundraiser => {
-                    if (fundraiser.ACTIVE === 1) {  // 只显示活跃状态为1的筹款活动
-                        const fundraiserElement = document.createElement('div');  // 创建一个新的 div 容器
-                        fundraiserElement.classList.add('fundraiser');  // 为 div 添加 class
+                    if (fundraiser.ACTIVE === 1) {  // "Only display fundraising events with an active status of 1."
+                        const fundraiserElement = document.createElement('div');  // "Create a new `div` container."
+                        fundraiserElement.classList.add('fundraiser');  // "Add a class to the `div`."
 
                         const contentElement = document.createElement('div');
                         contentElement.classList.add('content');
@@ -64,13 +64,13 @@
                         }
 						fundraiserElement.appendChild(contentElement);
                         fundraiserElement.appendChild(imageElement);
-                        // 将生成的内容添加到 fundraisers section 中
+                        // "Append the generated content to the fundraisers section."
                         fundraisersSection.appendChild(fundraiserElement);
                     }
                 });
             })
             .catch(error => {
-                console.error('Error getting fundraising campaign data:', error);  // 捕获并打印错误
+                console.error('Error getting fundraising campaign data:', error);  // "Catch and log the error."
             });
     });
 </script>

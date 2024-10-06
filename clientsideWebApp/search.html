@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Fundraisers</title>
     <style>
-        /* 全局样式 */
+        /* "Global styles." */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -17,7 +17,7 @@
             min-height: 100vh;
         }
 
-        /* 容器样式 */
+        /* "Container styles." */
         .container {
             width: 90%;
             max-width: 1200px;
@@ -27,7 +27,7 @@
             padding: 20px;
         }
 
-        /* 表单样式 */
+        /* "Form styles." */
         form div {
             margin-bottom: 15px;
         }
@@ -54,13 +54,13 @@
             background-color: #218838;
         }
 
-        /* 错误信息 */
+        /* "Error message." */
         .error {
             color: red;
             font-weight: bold;
         }
 
-        /* 返回首页按钮 */
+        /* "Return to homepage button." */
         .back-home {
             display: inline-block;
             padding: 10px 20px;
@@ -75,7 +75,7 @@
             background-color: #0056b3;
         }
 
-        /* 筹款项样式 */
+        /* "Fundraising item styles." */
         .fundraiser {
             display: flex;
             justify-content: space-between;
@@ -109,7 +109,7 @@
 </head>
 <body>
 <div class="container">
-    <!-- 左侧内容区 -->
+    <!-- "Left content area." -->
     <h1>Search Fundraisers</h1>
     <a href="/index.html" class="back-home">Back to Home</a>
     <form id="searchForm">
@@ -129,45 +129,45 @@
         <button type="button" onclick="clearCheckboxes()">Clear</button>
     </form>
 
-    <!-- 用于显示错误信息 -->
+    <!-- "Used to display error messages." -->
     <div id="error" class="error"></div>
 
-    <!-- 搜索结果显示区域 -->
+    <!-- "Search results display area." -->
     <div id="results"></div>
 </div>
 
 <script>
-    // 清除表单输入
+    // "Clear form inputs."
     function clearCheckboxes() {
         document.getElementById('organizer').value = '';
         document.getElementById('city').value = '';
         document.getElementById('category').value = '';
-        document.getElementById('error').textContent = '';  // 清空错误信息
-        document.getElementById('results').innerHTML = '';  // 清空结果显示区域
+        document.getElementById('error').textContent = '';  // "Clear error messages."
+        document.getElementById('results').innerHTML = '';  // "Clear the results display area."
     }
 
-    // 执行搜索
+    // "Execute search."
     function fetchFundraisers() {
-        // 获取用户输入的搜索条件
+        // "Retrieve the user's input search criteria."
         const organizer = document.getElementById('organizer').value.trim();
         const city = document.getElementById('city').value.trim();
         const category = document.getElementById('category').value.trim();
 
-        // 检查是否至少选择了一个条件
+        // "Check if at least one condition is selected."
         if (!organizer && !city && !category) {
             document.getElementById('error').textContent = 'Please select at least one search criterion！';
             return;
         }
 
-        // 清空之前的错误信息和结果
+        // "Clear previous error messages and results."
         document.getElementById('error').textContent = '';
         document.getElementById('results').innerHTML = '';
 
-        // 调用API获取数据
+        // "Call the API to retrieve data."
         fetch('http://localhost:3000/api/fundraisers')
             .then(response => response.json())
             .then(data => {
-                // 根据输入条件筛选数据
+                // "Filter the data based on the input criteria."
                 const filteredData = data.filter(fundraiser => {
                     return (organizer === '' || fundraiser.ORGANIZER.toLowerCase().includes(organizer.toLowerCase())) &&
                            (city === '' || fundraiser.CITY.toLowerCase().includes(city.toLowerCase())) &&
@@ -175,7 +175,7 @@
                            fundraiser.ACTIVE === 1;
                 });
 
-                // 显示筛选后的数据
+                // "Display the filtered data."
                 if (filteredData.length === 0) {
                     document.getElementById('error').textContent = 'No fundraisers found matching the criteria.';
                 } else {
@@ -187,16 +187,16 @@
             });
     }
 
-    // 显示筛选后的结果
+    // "Display the filtered results."
     function displayResults(fundraisers) {
         const resultsDiv = document.getElementById('results');
-        resultsDiv.innerHTML = '';  // 先清空之前的内容
+        resultsDiv.innerHTML = '';  // "First, clear the previous content."
 
-        // 遍历每个筹款活动并生成HTML
+        // "Iterate through each fundraising event and generate HTML."
         fundraisers.forEach(fundraiser => {
             const fundraiserElement = document.createElement('div');
             fundraiserElement.classList.add('fundraiser');
-			// 设置图片路径
+			// "Set the image path."
             let imageUrl = '';
             if (fundraiser.FUNDRAISER_ID === 1) {
                 imageUrl = './image/3.jpg';
@@ -209,7 +209,7 @@
             } else if (fundraiser.FUNDRAISER_ID === 5) {
                 imageUrl = './image/1.jpg';
             }
-            // 生成每个筹款活动的详细信息和链接
+            // "Generate detailed information and links for each fundraising event."
             fundraiserElement.innerHTML = `
 			<div class="fundraiser-info">
                 <h2><a href="/fundraiser.html?fundraiserId=${fundraiser.FUNDRAISER_ID}">${fundraiser.CAPTION}</a></h2>
