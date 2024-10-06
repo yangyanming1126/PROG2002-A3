@@ -19,7 +19,7 @@ router.get("/fundraisers", (req, res) => {
         }
     });
 });
-// POST: 创建新的筹款活动
+// "POST: Create a new fundraising event."
 router.post("/fundraiser", (req, res) => {
     const { organizer, caption, target_funding, current_funding, city, active, category_id } = req.body;
 
@@ -48,12 +48,12 @@ router.post("/fundraiser", (req, res) => {
     });
 });
 
-// PUT: 根据给定的ID更新现有的筹款活动
+// "PUT: Update an existing fundraising event based on the given ID."
 router.put("/fundraiser/:id", (req, res) => {
     const { id } = req.params;
     const { organizer, caption, target_funding, current_funding, city, active, category_id } = req.body;
 
-    // 校验必要字段
+    // "Validate the required fields."
     if (!organizer || !caption || !target_funding || !city || !category_id) {
         return res.status(400).send("Missing required fields: organizer, caption, target_funding, city, category_id.");
     }
@@ -80,11 +80,11 @@ router.put("/fundraiser/:id", (req, res) => {
     });
 });
 
-// DELETE: 根据给定的ID删除现有的筹款活动
+// "DELETE: Delete an existing fundraising event based on the given ID."
 router.delete("/fundraiser/:id", (req, res) => {
     const { id } = req.params;
 
-    // 首先检查该筹款活动是否已收到任何捐款
+    // "First, check if the fundraising event has received any donations."
     connection.query("SELECT COUNT(*) AS donationCount FROM donation WHERE FUNDRAISER_ID = ?", [id], (err, results) => {
         if (err) {
             console.error("Error while checking donations", err);
@@ -92,7 +92,7 @@ router.delete("/fundraiser/:id", (req, res) => {
         } else if (results[0].donationCount > 0) {
             res.status(400).send("Cannot delete fundraiser with existing donations.");
         } else {
-            // 如果没有收到捐款，则删除该筹款活动
+            // "If no donations have been received, delete the fundraising event."
             connection.query("DELETE FROM fundraiser WHERE FUNDRAISER_ID = ?", [id], (err, results) => {
                 if (err) {
                     console.error("Error while deleting fundraiser", err);
@@ -154,14 +154,14 @@ router.post("/fundraiser/:id/donate", (req, res) => {
             console.error("Error while inserting donation", err);
             res.status(500).send("Error while processing donation.");
         } else {
-            // 获取当前筹款活动的名称
+            // "Retrieve the name of the current fundraising event."
             connection.query("SELECT CAPTION FROM fundraiser WHERE FUNDRAISER_ID = ?", [id], (err, fundraiserResults) => {
                 if (err) {
                     console.error("Error retrieving fundraiser name", err);
                     res.status(500).send("Error retrieving fundraiser name.");
                 } else {
                     const fundraiserName = fundraiserResults[0].CAPTION;
-                    // 返回成功消息以及筹款活动名称
+                    // "Return a success message along with the fundraising event name."
                     res.status(201).send({ message: "Donation successful", fundraiserName: fundraiserName });
                 }
             });
