@@ -58,9 +58,9 @@ header {
 }
 
 .header-content {
-    max-width: 80%; /* 限制内容区域宽度，防止内容溢出 */
-    margin: 0 auto; /* 居中对齐内容 */
-    text-align: center; /* 文本居中对齐 */
+    max-width: 80%; /* "Limit the width of the content area to prevent overflow." */
+    margin: 0 auto; /* "Center align the content." */
+    text-align: center; /* "Center align the text." */
 }
 #fundraisers {
     margin: 20px;
@@ -84,8 +84,8 @@ header {
 }
 
 .fundraiser .image {
-    width: 800px; /* 设置图片容器的宽度 */
-    height: 220px; /* 设置图片容器的高度 */
+    width: 800px; /* "Set the width of the image container." */
+    height: 220px; /* "Set the height of the image container." */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
